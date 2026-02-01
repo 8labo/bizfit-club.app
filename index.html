@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BizFitクラブ | 8LABO プロトタイプ V42</title>
+    <title>BizFitクラブ</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Noto Sans JP -->
@@ -328,24 +328,24 @@
         }
 
         async function renderEvents() {
-            try {
-                const res = await fetchFromGas('getEventsData');
-                if(!res.success) return;
-                eventsData = res.events;
-                if(res.calendarUrl) document.getElementById('calendar-iframe').src = res.calendarUrl;
+    try {
+        const res = await fetchFromGas('getEventsData');
+        if(!res.success) return;
+        eventsData = res.events;
+        if(res.calendarUrl) document.getElementById('calendar-iframe').src = res.calendarUrl;
 
-                [document.getElementById('guest-event-grid'), document.getElementById('member-event-grid')].forEach((grid, idx) => {
-                    if (!grid) return;
-                    const isM = idx === 1;
-                    grid.innerHTML = eventsData.map(e => {
-                        const isB = ordersData.some(o => o.eventId === e.id && o.status !== 'キャンセル');
-                        const rem = e.capacity - e.enrollees;
-                        const cPrice = (e.personalPrice !== e.companionPrice && e.maxAccompaniments > 0) ? `<span class="text-[10px] text-slate-400 font-bold ml-1 text-left">(同伴 ¥${e.companionPrice.toLocaleString()})</span>` : "";
-                        return `<div class="bg-white rounded-[2rem] border border-slate-200 p-6 card-hover flex flex-col justify-between h-full shadow-sm text-left event-card"><div class="space-y-4"><div class="flex justify-between items-center"><span class="text-sm font-black bg-orange-50 text-8labo px-3 py-1 rounded-lg tracking-tight text-left">${e.date}</span><span class="text-[10px] font-bold ${rem<=0?'text-red-500 bg-red-50':'text-slate-400 bg-slate-50'} px-2 py-1 rounded-md text-left">${rem<=0?'満員':`残り ${rem} 名`}</span></div><div class="space-y-1"><div class="flex items-start gap-3 justify-between"><h4 class="font-black text-slate-800 text-lg leading-tight flex-grow break-words text-left">${e.title}</h4><button onclick="event.stopPropagation(); openDetailModal('${e.id}')" style="position: relative !important; z-index: 99999 !important; pointer-events: auto !important;" class="shrink-0 w-8 h-8 flex items-center justify-center bg-slate-50 text-slate-300 hover:text-8labo rounded-full transition-colors btn-safe-click"><i data-lucide="info" class="w-4 h-4 text-left"></i></button></div><div class="price-align-row"><p class="text-8labo font-black text-xl tracking-tighter text-left">${e.time}</p><div class="text-8labo font-black text-sm text-right"><span>¥${e.personalPrice.toLocaleString()}</span>${cPrice}</div></div></div><div class="flex items-center justify-between bg-slate-50 p-3 rounded-2xl border border-slate-100"><p class="text-[11px] text-slate-500 font-bold flex items-center gap-1 min-w-0 text-left"><i data-lucide="map-pin" class="w-3 h-3 text-8labo/50 text-left"></i> <span class="truncate text-left">${e.location}</span></p><button onclick="event.stopPropagation(); openLocationModal('${e.id}')" class="text-[9px] bg-white border border-slate-200 text-slate-400 px-2 py-1 rounded-lg font-black shadow-sm transition-all hover:border-8labo btn-safe-click">MAP</button></div></div><div class="mt-4">${isM ? (isB ? `<div class="w-full py-4 bg-green-50 text-green-600 rounded-2xl text-sm font-black text-center flex items-center justify-center gap-2 shadow-inner"><i data-lucide="check-circle" class="w-4 h-4"></i> 予約済み</div>` : `<div class="flex items-center justify-start px-1 mb-2"><label class="flex items-center gap-2 cursor-pointer group btn-safe-click"><input type="checkbox" id="cal-${e.id}" class="w-4 h-4 accent-orange-500 rounded border-slate-300 transition-all text-left"><span class="text-[10px] text-slate-400 group-hover:text-8labo text-left text-left">カレンダー追加</span></label></div><button onclick="event.stopPropagation(); confirmAction('${e.id}')" ${rem<=0?'disabled':''} class="w-full py-4 ${rem<=0?'bg-slate-100 text-slate-300':'bg-8labo text-white shadow-lg active:scale-95'} rounded-2xl text-sm font-black transition-all btn-safe-click">申し込む</button>`) : `<button onclick="event.stopPropagation(); navigateTo('login')" class="w-full py-4 bg-slate-900 text-white rounded-2xl text-sm font-black shadow-lg active:scale-95 btn-safe-click">ログインして予約</button>`}</div></div>`;
-                    }).join('');
-                });
-                lucide.createIcons();
-            } catch (err) { console.error("Event Fetch Error:", err); }
+        [document.getElementById('guest-event-grid'), document.getElementById('member-event-grid')].forEach((grid, idx) => {
+            if (!grid) return;
+            const isM = idx === 1;
+            grid.innerHTML = eventsData.map(e => {
+                const isB = ordersData.some(o => o.eventId === e.id && o.status !== 'キャンセル');
+                const rem = e.capacity - e.enrollees;
+                const cPrice = (e.personalPrice !== e.companionPrice && e.maxAccompaniments > 0) ? `<span class="text-[10px] text-slate-400 font-bold ml-1 text-left">(同伴 ¥${e.companionPrice.toLocaleString()})</span>` : "";
+                return `<div class="bg-white rounded-[2rem] border border-slate-200 p-6 card-hover flex flex-col justify-between h-full shadow-sm text-left event-card"><div class="space-y-4"><div class="flex justify-between items-center"><span class="text-sm font-black bg-orange-50 text-8labo px-3 py-1 rounded-lg tracking-tight text-left">${e.date}</span><span class="text-[10px] font-bold ${rem<=0?'text-red-500 bg-red-50':'text-slate-400 bg-slate-50'} px-2 py-1 rounded-md text-left">${rem<=0?'満員':`残り ${rem} 名`}</span></div><div class="space-y-1"><div class="flex items-start gap-3 justify-between"><h4 class="font-black text-slate-800 text-lg leading-tight flex-grow break-words text-left">${e.title}</h4><button onclick="openDetailModal('${e.id}')" style="position: relative !important; z-index: 99999 !important; pointer-events: auto !important;" class="shrink-0 w-8 h-8 flex items-center justify-center bg-slate-50 text-slate-300 hover:text-8labo rounded-full transition-colors btn-safe-click"><i data-lucide="info" class="w-4 h-4 text-left"></i></button></div><div class="price-align-row"><p class="text-8labo font-black text-xl tracking-tighter text-left">${e.time}</p><div class="text-8labo font-black text-sm text-right"><span>¥${e.personalPrice.toLocaleString()}</span>${cPrice}</div></div></div><div class="flex items-center justify-between bg-slate-50 p-3 rounded-2xl border border-slate-100"><p class="text-[11px] text-slate-500 font-bold flex items-center gap-1 min-w-0 text-left"><i data-lucide="map-pin" class="w-3 h-3 text-8labo/50 text-left"></i> <span class="truncate text-left">${e.location}</span></p><button onclick="openLocationModal('${e.id}')" class="text-[9px] bg-white border border-slate-200 text-slate-400 px-2 py-1 rounded-lg font-black shadow-sm transition-all hover:border-8labo btn-safe-click">MAP</button></div></div><div class="mt-4">${isM ? (isB ? `<div class="w-full py-4 bg-green-50 text-green-600 rounded-2xl text-sm font-black text-center flex items-center justify-center gap-2 shadow-inner"><i data-lucide="check-circle" class="w-4 h-4"></i> 予約済み</div>` : `<div class="flex items-center justify-start px-1 mb-2"><label class="flex items-center gap-2 cursor-pointer group btn-safe-click"><input type="checkbox" id="cal-${e.id}" class="w-4 h-4 accent-orange-500 rounded border-slate-300 transition-all text-left"><span class="text-[10px] text-slate-400 group-hover:text-8labo text-left">カレンダー追加</span></label></div><button onclick="confirmAction('${e.id}')" ${rem<=0?'disabled':''} class="w-full py-4 ${rem<=0?'bg-slate-100 text-slate-300':'bg-8labo text-white shadow-lg active:scale-95'} rounded-2xl text-sm font-black transition-all btn-safe-click">申し込む</button>`) : `<button onclick="navigateTo('login')" class="w-full py-4 bg-slate-900 text-white rounded-2xl text-sm font-black shadow-lg active:scale-95 btn-safe-click">ログインして予約</button>`}</div></div>`;
+            }).join('');
+        });
+        lucide.createIcons();
+    } catch (err) { console.error("Event Fetch Error:", err);} 
         }
 
         function openDetailModal(id) { 
