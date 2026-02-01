@@ -676,19 +676,21 @@
         function handleRegisterSubmit(form) { userData = Object.fromEntries(new FormData(form).entries()); userData.plan = 'FREE'; userData.attendanceCount = 0; userData.points = 0; ordersData = []; saveAppToLocal(); isLoggedIn = true; navigateTo('dashboard'); }
 
         window.onload = async () => {
-            await renderEvents();
-            if (loadAppFromLocal()) {
-                isLoggedIn = true;
-                navigateTo('dashboard');
-            } else {
-                userData = { name: "開発者太郎", email: "dev@8labo.jp", plan: "PAID", attendanceCount: 12, points: 850, profileImage: null };
-                ordersData = [];
-                isLoggedIn = true;
-                saveAppToLocal();
-                navigateTo('dashboard');
-            }
-            lucide.createIcons();
-        };
+  await renderEvents();
+
+  if (loadAppFromLocal()) {
+    isLoggedIn = true;
+    navigateTo('dashboard');
+  } else {
+    // 本番：未ログインとして開始
+    isLoggedIn = false;
+    userData = null;
+    ordersData = [];
+    navigateTo('guest-top'); // ←ログイン/新規登録ボタンが出るTOP
+  }
+
+  lucide.createIcons();
+};
     </script>
 </body>
 </html>
