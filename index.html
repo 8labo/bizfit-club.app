@@ -100,6 +100,9 @@
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+
+        /* スクロール時にstickyヘッダーに被らないための安全策 */
+        html { scroll-padding-top: 72px; }
     </style>
 </head>
 
@@ -202,7 +205,7 @@
 
             <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden text-left">
                 <div class="bg-8labo h-10 opacity-90"></div>
-                <div class="px-8 pb-10 -mt-6">
+                <div class="px-6 pb-6 -mt-5">
                     <div class="mypage-grid">
                         <div class="flex flex-col md:flex-row items-center gap-4 md:gap-6 text-left">
                             <div class="relative group cursor-pointer btn-safe-click" onclick="triggerPhotoUpload()">
@@ -233,11 +236,11 @@
                             </div>
 
                             <div class="flex gap-4 w-full md:w-auto text-left text-left">
-                                <div class="flex-1 text-center bg-slate-50 px-6 py-5 rounded-[2rem] border border-slate-100 shadow-inner min-w-[130px]">
+                                <div class="flex-1 text-center bg-slate-50 px-5 py-4 rounded-[2rem] border border-slate-100 shadow-inner min-w-[130px]">
                                     <span class="block text-[10px] text-slate-400 font-black mb-1 uppercase tracking-widest text-center">参加回数</span>
                                     <span class="text-3xl font-black text-8labo text-center" id="stat-attendance-count">0<span class="text-sm ml-0.5 text-center">回</span></span>
                                 </div>
-                                <div class="flex-1 text-center bg-slate-50 px-6 py-5 rounded-[2rem] border border-slate-100 shadow-inner min-w-[130px]">
+                                <div class="flex-1 text-center bg-slate-50 px-5 py-4 rounded-[2rem] border border-slate-100 shadow-inner min-w-[130px]">
                                     <span class="block text-[10px] text-slate-400 font-black mb-1 uppercase tracking-widest text-center">累計ポイント</span>
                                     <span class="text-3xl font-black text-slate-700 text-center" id="stat-points">0<span class="text-sm ml-0.5">pt</span></span>
                                 </div>
@@ -246,7 +249,7 @@
                     </div>
                 </div>
                 
-                <div class="px-8 py-3 bg-slate-50/50 border-t border-slate-100 flex justify-end text-left text-left text-left">
+                <div class="px-6 py-2 bg-slate-50/50 border-t border-slate-100 flex justify-end text-left text-left text-left">
                     <button onclick="event.stopPropagation(); openModal('modal-logout-confirm')" class="text-[11px] font-bold text-slate-400 hover:text-red-500 transition-all btn-safe-click uppercase tracking-widest flex items-center gap-1"><i data-lucide="log-out" class="w-3 h-3 text-left"></i> ログアウト</button>
                 </div>
             </div>
@@ -300,12 +303,12 @@
                     <p id="detail-description" class="text-sm text-slate-600 leading-relaxed text-left text-left"></p>
                     <div class="grid grid-cols-2 gap-3 text-left text-left text-left text-left text-left">
                         <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center flex flex-col items-center justify-center">
-                            <p class="text-[11px] font-bold text-slate-400 uppercase mb-1 text-center">参加費（本人）</p>
-                            <p id="detail-price-text" class="text-lg font-black text-slate-800 text-center"></p>
+                            <p class="text-xs font-black text-slate-400 mb-1 text-center tracking-tight">参加費（本人）</p>
+                            <p id="detail-price-text" class="text-2xl font-black text-slate-800 leading-none text-center"></p>
                         </div>
                         <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center flex flex-col items-center justify-center">
-                            <p class="text-[11px] font-bold text-slate-400 uppercase mb-1 text-center">獲得ポイント</p>
-                            <p id="detail-point-text" class="text-lg font-black text-8labo text-center"></p>
+                            <p class="text-xs font-black text-slate-400 mb-1 text-center tracking-tight">獲得ポイント</p>
+                            <p id="detail-point-text" class="text-2xl font-black text-8labo leading-none text-center"></p>
                         </div>
                     </div>
                 </div>
