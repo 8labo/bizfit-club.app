@@ -1,987 +1,298 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BizFitクラブ | 8LABO プロトタイプ</title>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/lucide@latest"></script>
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BizFitクラブ</title>
   <style>
-    :root { --8labo-orange: #F39800; }
-    body { font-family: 'Noto Sans JP', sans-serif; background-color: #f8fafc; -webkit-tap-highlight-color: transparent; }
-    .text-8labo { color: var(--8labo-orange); }
-    .bg-8labo { background-color: var(--8labo-orange); }
-    .border-8labo { border-color: var(--8labo-orange); }
-
-    .page { display: none; opacity: 0; transition: opacity 0.2s ease-in-out; }
-    .page.active { display: block; opacity: 1; }
-
-    .event-card { isolation: isolate; position: relative; }
-    .card-hover { transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; position: relative; overflow: hidden; }
-    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.08); }
-
-    .modal-overlay { display: none; position: fixed; inset: 0; background-color: rgba(0,0,0,0.7); z-index: 200000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
-    .modal-overlay.active { display: flex !important; }
-
-    .btn-safe-click {
-      position: relative !important;
-      z-index: 99999 !important;
-      pointer-events: auto !important;
-      cursor: pointer !important;
-      touch-action: manipulation;
-    }
-
-    .price-align-row { display: flex !important; align-items: baseline !important; justify-content: space-between; width: 100%; }
-
-    .fade-in-ui { animation: fadeIn 0.3s ease-out forwards; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-
-    .progress-wrap { width: 150px; height: 150px; position: relative; display: grid; place-items: center; margin: 0 auto; }
-    .progress-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-    .progress-center .main { font-size: 1.3rem; font-weight: 900; line-height: 1.1; color: #0f172a; letter-spacing: 0.05em; }
-    .progress-center .sub { margin-top: .4rem; font-size: .6rem; font-weight: 800; color: #94a3b8; letter-spacing: .02em; }
-    .progress-ring { transform: rotate(-90deg); }
-    .progress-ring circle { fill: transparent; stroke-width: 10; transition: stroke-dasharray 0.8s ease-out; }
-    .progress-ring .bg { stroke: #f1f5f9; }
-    .progress-ring .bar { stroke: var(--8labo-orange); stroke-linecap: round; }
-
-    .profile-badge {
-      display: inline-flex; align-items: center; gap: .35rem;
-      padding: .2rem .75rem; border-radius: 999px; font-weight: 900;
-      font-size: 10px; letter-spacing: .05em;
-      background: rgba(255,255,255,.8);
-      border: 1px solid rgba(226,232,240,.9);
-      backdrop-filter: blur(6px);
-    }
-    .profile-badge.paid {
-      color: #b45309;
-      border-color: rgba(243, 152, 0, 0.4);
-      background: rgba(255, 251, 235, 0.9);
-      box-shadow: 0 2px 10px rgba(243, 152, 0, 0.1);
-    }
-
-    .mypage-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
-    @media (min-width: 768px) { .mypage-grid { grid-template-columns: 1fr 1.2fr; align-items: center; } }
-
-    .calendar-container { width: 100%; height: 450px; border-radius: 2rem; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-
-    header { z-index: 100000 !important; background-color: #ffffff !important; position: sticky; top: 0; }
-
-    .cropper-container { max-height: 300px; width: 100%; background-color: #000; overflow: hidden; }
-    .cropper-view-box, .cropper-face { border-radius: 50%; }
-
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    /* ※ 既存デザインを壊したくない場合は、ここをあなたのCSSに合わせて最小限にしてください */
+    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Hiragino Sans","Noto Sans JP",sans-serif;margin:0;background:#f6f6f6;}
+    header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#fff;border-bottom:1px solid #eee;}
+    .brand{font-weight:700}
+    .container{max-width:480px;margin:0 auto;padding:16px;}
+    .card{background:#fff;border-radius:16px;padding:16px;box-shadow:0 8px 20px rgba(0,0,0,.06);margin-bottom:12px;}
+    .btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:12px;padding:12px 14px;font-weight:700;cursor:pointer}
+    .btn.primary{background:#b67a12;color:#fff;width:100%;}
+    .btn.ghost{background:#fff;border:1px solid #ddd;}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .muted{color:#666;font-size:12px}
+    input,select{width:100%;box-sizing:border-box;border:1px solid #ddd;border-radius:12px;padding:12px 12px;font-size:16px;background:#fff;}
+    label{display:block;font-size:12px;color:#555;margin:10px 0 6px;}
+    .title{font-size:22px;font-weight:800;text-align:center;margin:6px 0 14px;}
+    .hidden{display:none!important}
+    .event-title{font-size:16px;font-weight:800;margin:0 0 6px;}
+    .event-meta{font-size:13px;color:#444;margin:0 0 10px;line-height:1.5}
+    .event-detail{font-size:14px;color:#333;white-space:pre-wrap;margin:10px 0;}
+    .actions{display:flex;gap:10px;margin-top:10px;}
+    .actions .btn{flex:1}
+    .pill{display:inline-block;background:#f2f2f2;border-radius:999px;padding:4px 10px;font-size:12px;margin-left:6px}
+    .danger{color:#c0392b;font-weight:700}
+    .ok{color:#1e8449;font-weight:700}
   </style>
 </head>
-
-<body class="text-slate-800 text-left">
-
-  <!-- ヘッダー -->
-  <header class="border-b border-slate-200 shadow-sm">
-    <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-2 cursor-pointer btn-safe-click" onclick="goHome()">
-        <div class="w-8 h-8 bg-8labo rounded-lg flex items-center justify-center text-white font-bold shadow-sm">8</div>
-        <h1 class="font-bold text-xl tracking-tighter text-slate-800">BizFit<span class="text-8labo">クラブ</span></h1>
-      </div>
-      <div id="header-nav" class="flex items-center"></div>
-    </div>
-  </header>
-
-  <main class="max-w-5xl mx-auto px-4 py-4 min-h-[calc(100vh-14rem)]">
-
-    <!-- Guest Top -->
-    <section id="page-guest-top" class="page space-y-10">
-      <div class="text-center py-10 md:py-16 space-y-6">
-        <div class="inline-block px-4 py-1 bg-orange-50 text-8labo rounded-full text-[10px] font-black tracking-widest uppercase mx-auto">The Mission</div>
-        <h2 class="text-4xl md:text-6xl font-black leading-tight text-slate-900 text-center">運動を習慣に、<br><span class="text-8labo">地域を笑顔に。</span></h2>
-        <div class="pt-4 flex flex-col items-center gap-4">
-          <button onclick="navigateTo('login')" class="w-full max-w-[280px] py-4 bg-8labo text-white font-bold rounded-2xl shadow-lg btn-safe-click text-center">ログイン</button>
-          <button onclick="navigateTo('register')" class="text-sm font-bold text-slate-400 hover:text-8labo transition-colors btn-safe-click text-center">初めての方はこちら（新規会員登録）</button>
-        </div>
-      </div>
-      <div class="space-y-6">
-        <h3 class="text-2xl font-black flex items-center gap-2 px-1 text-slate-800 text-left">
-          <i data-lucide="sparkles" class="text-8labo w-6 h-6"></i>開催予定のイベント
-        </h3>
-        <div id="guest-event-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left"></div>
-      </div>
-    </section>
-
-    <!-- Login -->
-    <section id="page-login" class="page max-w-md mx-auto py-12">
-      <div class="bg-white rounded-3xl shadow-xl p-8 border border-slate-100 text-center">
-        <h2 class="text-2xl font-bold mb-6">ログイン</h2>
-        <form class="space-y-4 text-left" onsubmit="event.preventDefault(); handleLoginSubmit();">
-          <input type="email" id="login-email" required placeholder="メールアドレス"
-            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-8labo transition-all">
-          <input type="password" id="login-password" required placeholder="パスワード"
-            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-8labo transition-all">
-          <button type="submit"
-            class="w-full py-4 bg-8labo text-white font-bold rounded-xl mt-4 btn-safe-click shadow-lg shadow-orange-500/20">
-            ログインする
-          </button>
-        </form>
-      </div>
-    </section>
-
-    <!-- Register（指定どおり調整） -->
-    <section id="page-register" class="page max-w-xl mx-auto py-2">
-      <div class="bg-white rounded-3xl shadow-xl p-8 border border-slate-100 text-center text-left">
-        <!-- タイトルを少し上に：余白を詰める（押しにくくしない） -->
-        <h2 class="text-2xl font-bold mb-4 text-center -mt-1">新規会員登録</h2>
-
-        <form class="space-y-4 text-left" onsubmit="event.preventDefault(); handleRegisterSubmit(this);">
-          <!-- メールと同サイズの枠を2つ、メールの上に縦並び -->
-          <input type="text" name="name" required placeholder="氏名"
-            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none transition-all">
-          <input type="text" name="kana" required placeholder="ふりがな"
-            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none transition-all">
-
-          <input type="email" name="email" required placeholder="メールアドレス"
-            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none transition-all">
-
-          <div class="space-y-1">
-            <input type="password" name="password" required pattern="[a-zA-Z0-9]{6,12}"
-              placeholder="パスワード(半角英数字6-12桁)"
-              class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none transition-all text-left">
-          </div>
-
-          <div class="grid grid-cols-2 gap-4">
-            <select name="age" required
-              class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-slate-600">
-              <option value="">年代を選択</option><option>10代</option><option>20代</option><option>30代</option><option>40代</option><option>50代</option><option>60代以上</option>
-            </select>
-            <select name="gender" required
-              class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-slate-600">
-              <option value="">性別を選択</option><option>男性</option><option>女性</option><option>回答しない</option>
-            </select>
-          </div>
-
-          <select name="industry" required
-            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-slate-600">
-            <option value="">業種を選択</option><option>製造</option><option>建設</option><option>IT</option><option>医療</option><option>教育</option><option>飲食</option><option>自営業</option><option>その他</option>
-          </select>
-
-          <select name="purpose" required
-            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-slate-600">
-            <option value="">参加目的を選択</option><option>運動不足解消</option><option>ストレス発散</option><option>ビジネス交流</option><option>パフォーマンス向上</option><option>その他</option>
-          </select>
-
-          <button type="submit"
-            class="w-full py-4 bg-8labo text-white font-bold rounded-xl mt-3 btn-safe-click shadow-lg shadow-orange-500/30">
-            登録を完了してはじめる
-          </button>
-        </form>
-      </div>
-    </section>
-
-    <!-- Dashboard -->
-    <section id="page-dashboard" class="page space-y-8 text-left">
-      <div class="space-y-6">
-        <div class="flex items-center justify-between px-1 text-left">
-          <h3 class="text-2xl font-black flex items-center gap-2 text-slate-800 text-left">
-            <i data-lucide="calendar-check" class="text-8labo"></i>予約可能プログラム
-          </h3>
-          <button onclick="devReset()" class="text-[9px] bg-slate-200 text-slate-500 px-2 py-1 rounded font-bold btn-safe-click">Dev Reset</button>
-        </div>
-        <div id="member-event-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left"></div>
-      </div>
-
-      <div class="space-y-4 px-1 text-left">
-        <h3 class="text-xl font-black flex items-center gap-2 text-slate-800 text-left">
-          <i data-lucide="calendar" class="text-8labo"></i>公式スケジュール
-        </h3>
-        <div class="calendar-container">
-          <iframe id="calendar-iframe" src="" style="border: 0" width="100%" height="450" frameborder="0" scrolling="no"></iframe>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-3xl p-6 border border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-6 shadow-sm text-left">
-        <div class="space-y-2">
-          <h4 class="font-bold flex items-center gap-2 text-slate-800 text-left"><i data-lucide="info" class="text-8labo"></i>当日の持ち物</h4>
-          <p class="text-sm text-slate-500 leading-relaxed">動きやすい服装、室内用シューズ、タオル、飲み物</p>
-        </div>
-        <div class="space-y-2">
-          <h4 class="font-bold flex items-center gap-2 text-slate-800 text-left"><i data-lucide="wallet" class="text-8labo"></i>お支払いについて</h4>
-          <p class="text-sm text-slate-500 leading-relaxed">当日現地にて<span class="font-bold text-8labo underline underline-offset-4 decoration-2">「現金払い」</span>のみ承っております。</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- MyPage（最小限：必要箇所のみ） -->
-    <section id="page-mypage" class="page max-w-5xl mx-auto space-y-3 text-left">
-      <div class="flex justify-start">
-        <button onclick="navigateTo('dashboard')" class="flex items-center gap-1 text-slate-400 hover:text-8labo transition-colors font-bold text-[13px] btn-safe-click mt-0.5 mb-0.5">
-          <i data-lucide="chevron-left" class="w-4 h-4"></i> 戻る
-        </button>
-      </div>
-
-      <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden">
-        <div class="bg-8labo h-10 opacity-90"></div>
-        <div class="px-8 pb-10 -mt-6">
-          <div class="mypage-grid">
-            <div class="flex flex-col md:flex-row items-center gap-4 md:gap-6 text-left">
-              <div class="relative group cursor-pointer btn-safe-click" onclick="triggerPhotoUpload()">
-                <div class="w-24 h-24 bg-white rounded-3xl p-1 shadow-xl flex items-center justify-center overflow-hidden">
-                  <img id="profile-img-preview" src="" class="w-full h-full object-cover rounded-[1.25rem] hidden">
-                  <div id="profile-img-placeholder" class="w-full h-full bg-slate-50 rounded-[1.25rem] flex items-center justify-center text-slate-300">
-                    <i data-lucide="user" class="w-12 h-12"></i>
-                  </div>
-                </div>
-                <div class="absolute bottom-1 right-1 w-8 h-8 bg-8labo text-white rounded-full flex items-center justify-center border-4 border-white shadow-lg">
-                  <i data-lucide="camera" class="w-4 h-4"></i>
-                </div>
-                <input type="file" id="profile-photo-input" class="hidden" accept="image/*" onchange="handlePhotoChange(this)">
-              </div>
-
-              <div class="profile-meta space-y-1 text-center md:text-left">
-                <h3 id="profile-name" class="text-3xl font-black text-slate-800">---</h3>
-                <p id="profile-email" class="text-xs text-slate-400 font-bold mb-2">---</p>
-                <span id="profile-type" class="profile-badge paid uppercase">8LABO MEMBERSHIP</span>
-              </div>
-            </div>
-
-            <div class="flex flex-col md:flex-row items-center justify-center md:justify-end gap-6 md:gap-8">
-              <div class="flex gap-4 w-full md:w-auto">
-                <div class="flex-1 text-center bg-slate-50 px-6 py-5 rounded-[2rem] border border-slate-100 shadow-inner min-w-[130px]">
-                  <span class="block text-[10px] text-slate-400 font-black mb-1 uppercase tracking-widest">参加回数</span>
-                  <span class="text-3xl font-black text-8labo" id="stat-attendance-count">0<span class="text-sm ml-0.5">回</span></span>
-                </div>
-                <div class="flex-1 text-center bg-slate-50 px-6 py-5 rounded-[2rem] border border-slate-100 shadow-inner min-w-[130px]">
-                  <span class="block text-[10px] text-slate-400 font-black mb-1 uppercase tracking-widest">累計ポイント</span>
-                  <span class="text-3xl font-black text-slate-700" id="stat-points">0<span class="text-sm ml-0.5">pt</span></span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <div class="px-8 py-3 bg-slate-50/50 border-t border-slate-100 flex justify-end">
-          <button onclick="openModal('modal-logout-confirm')"
-            class="text-[11px] font-bold text-slate-400 hover:text-red-500 transition-all btn-safe-click uppercase tracking-widest flex items-center gap-1">
-            <i data-lucide="log-out" class="w-3 h-3"></i> ログアウト
-          </button>
-        </div>
-      </div>
-
-      <div class="space-y-4 px-1 text-left">
-        <h3 class="text-lg font-black flex items-center gap-2 text-slate-700 text-left">
-          <i data-lucide="bookmark-check" class="text-8labo"></i>予約中のイベント
-        </h3>
-        <div id="booked-event-list" class="space-y-3 text-left"></div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Crop Modal -->
-  <div id="modal-crop" class="modal-overlay">
-    <div class="bg-white rounded-[2rem] max-w-sm w-full p-6 shadow-2xl scale-95 transition-all text-center mx-4">
-      <h3 class="text-lg font-black mb-4">写真の範囲を調整</h3>
-      <div class="cropper-container mb-6 rounded-2xl shadow-inner">
-        <img id="crop-image" src="" style="max-width: 100%;">
-      </div>
-      <div class="flex gap-3">
-        <button onclick="closeModal('modal-crop')" class="flex-1 py-3 border border-slate-200 rounded-xl font-bold text-slate-500 btn-safe-click hover:bg-slate-50">戻る</button>
-        <button onclick="saveCroppedImage()" class="flex-1 py-3 bg-8labo text-white rounded-xl font-black shadow-lg btn-safe-click active:scale-95">完了</button>
-      </div>
-    </div>
+<body>
+<header>
+  <div class="brand">BizFitクラブ</div>
+  <div class="row">
+    <button class="btn ghost" id="toRegisterBtn">新規登録</button>
+    <button class="btn ghost" id="toEventsBtn">イベント</button>
   </div>
+</header>
 
-  <!-- Detail Modal -->
-  <div id="modal-detail" class="modal-overlay">
-    <div class="bg-white rounded-[2rem] max-w-md w-full p-6 shadow-2xl scale-95 transition-all overflow-hidden flex flex-col max-h-[90vh] text-left mx-4">
-      <div class="flex justify-between items-start mb-4">
-        <div class="min-w-0 pr-2">
-          <span class="text-[10px] font-black bg-orange-50 text-8labo px-2 py-1 rounded-md mb-1 inline-block uppercase tracking-tighter">Details</span>
-          <h3 id="detail-title" class="font-black text-slate-900 break-words leading-tight"></h3>
-        </div>
-        <button onclick="closeModal('modal-detail')" class="p-2 bg-slate-50 hover:bg-slate-100 rounded-full text-slate-400 shrink-0 transition-colors btn-safe-click">
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
+<div class="container">
+
+  <!-- 画面：イベント一覧 -->
+  <section id="viewEvents" class="card">
+    <div class="title">イベント一覧</div>
+    <div id="eventsLoading" class="muted">読み込み中…</div>
+    <div id="eventsList"></div>
+  </section>
+
+  <!-- 画面：新規会員登録 -->
+  <section id="viewRegister" class="card hidden">
+    <div class="title" id="registerTitle">新規会員登録</div>
+
+    <!-- ★ここが要望：氏名 / ふりがな をメールと同じサイズで縦2段（メールの上） -->
+    <label for="nameInput">氏名</label>
+    <input id="nameInput" type="text" autocomplete="name" />
+
+    <label for="kanaInput">ふりがな</label>
+    <input id="kanaInput" type="text" />
+
+    <label for="emailInput">メールアドレス</label>
+    <input id="emailInput" type="email" autocomplete="email" inputmode="email" />
+
+    <div class="row">
+      <div style="flex:1">
+        <label for="ageSelect">年代</label>
+        <select id="ageSelect">
+          <option value="">選択</option>
+          <option>10代</option><option>20代</option><option>30代</option><option>40代</option><option>50代</option><option>60代</option><option>70代以上</option>
+        </select>
       </div>
-
-      <div class="space-y-4 overflow-y-auto pr-1 flex-grow">
-        <div class="aspect-[16/7] bg-slate-100 rounded-2xl overflow-hidden shadow-inner shrink-0">
-          <img id="detail-img" src="" class="w-full h-full object-cover" alt="Event">
-        </div>
-
-        <div class="space-y-3">
-          <p id="detail-description" class="text-sm text-slate-600 leading-relaxed"></p>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center flex flex-col items-center justify-center">
-              <p class="text-[11px] font-bold text-slate-400 uppercase mb-1">参加費（本人）</p>
-              <p id="detail-price-text" class="text-lg font-black text-slate-800"></p>
-            </div>
-            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center flex flex-col items-center justify-center">
-              <p class="text-[11px] font-bold text-slate-400 uppercase mb-1">獲得ポイント</p>
-              <p id="detail-point-text" class="text-lg font-black text-8labo"></p>
-            </div>
-          </div>
-
-          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-            <div class="flex items-center justify-between">
-              <div class="min-w-0">
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">場所</p>
-                <p id="detail-location" class="text-sm font-bold text-slate-700 truncate"></p>
-                <p id="detail-address" class="text-[11px] text-slate-500 mt-1 leading-tight"></p>
-              </div>
-              <button id="detail-map-btn" onclick="openMapFromDetail()"
-                class="text-[10px] bg-white border border-slate-200 text-slate-400 px-3 py-2 rounded-xl font-black shadow-sm transition-all hover:border-8labo uppercase tracking-widest btn-safe-click">
-                MAP
-              </button>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <div class="pt-5 text-center">
-        <button onclick="closeModal('modal-detail')" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-sm active:scale-95 shadow-md btn-safe-click">
-          内容を理解しました
-        </button>
+      <div style="flex:1">
+        <label for="genderSelect">性別</label>
+        <select id="genderSelect">
+          <option value="">選択</option>
+          <option>男性</option><option>女性</option><option>その他</option><option>回答しない</option>
+        </select>
       </div>
     </div>
-  </div>
 
-  <!-- Confirm Booking Modal -->
-  <div id="modal-confirm" class="modal-overlay">
-    <div class="bg-white rounded-[2rem] max-w-sm w-full p-6 shadow-2xl scale-95 transition-all text-center mx-4">
-      <h3 class="text-lg font-black mb-3">申し込み内容の確認</h3>
-      <div id="confirm-details" class="bg-slate-50 p-3 rounded-2xl text-left space-y-0.5 mb-4 border border-slate-100 text-sm"></div>
-
-      <div id="companion-section" class="mb-5 space-y-4 text-center">
-        <div class="space-y-1.5">
-          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">同伴者数を選択</p>
-          <div class="flex items-center justify-center gap-5">
-            <button onclick="changeAccompaniments(-1)" class="w-10 h-10 bg-white border-2 border-slate-100 rounded-xl flex items-center justify-center text-slate-400 active:scale-90 shadow-sm hover:border-8labo btn-safe-click">
-              <i data-lucide="minus" class="w-5 h-5"></i>
-            </button>
-
-            <div class="flex flex-col items-center min-w-[3.5rem]">
-              <span id="accompaniment-count" class="text-3xl font-black text-slate-800 leading-none">0</span>
-              <span class="text-[9px] font-bold text-slate-400 mt-0.5">名</span>
-            </div>
-
-            <button onclick="changeAccompaniments(1)" class="w-10 h-10 bg-white border-2 border-slate-100 rounded-xl flex items-center justify-center text-slate-400 active:scale-90 shadow-sm hover:border-8labo btn-safe-click">
-              <i data-lucide="plus" class="w-5 h-5"></i>
-            </button>
-          </div>
-
-          <p id="companion-warning" class="hidden fade-in-ui text-[10px] font-bold text-red-500 text-center px-2 leading-tight mt-3">
-            ※同伴者価格は、新規の方またはご家族(お子様)に限定されます。
-          </p>
-        </div>
-
-        <div id="consent-area" class="hidden fade-in-ui px-1 flex justify-center">
-          <label class="flex items-start gap-2 cursor-pointer group text-center">
-            <input type="checkbox" id="consent-check" onchange="toggleBookingButton()" class="mt-0.5 w-4 h-4 rounded border-slate-300 accent-orange-500 btn-safe-click">
-            <span class="text-[10px] font-bold text-slate-500 leading-tight">確認しました</span>
-          </label>
-        </div>
-
-        <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-2 text-left">
-          <div class="flex justify-between items-center">
-            <span class="text-[11px] font-bold text-slate-500">合計人数</span>
-            <span id="summary-total-count" class="text-xl font-black">1名</span>
-          </div>
-          <div class="flex justify-between items-center">
-            <span class="text-[11px] font-bold text-slate-400">合計金額</span>
-            <span id="summary-total-price" class="text-xl font-black text-8labo">0円</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex gap-3">
-        <button onclick="closeModal('modal-confirm')" class="flex-1 py-3 border border-slate-200 rounded-xl font-bold text-slate-500 btn-safe-click hover:bg-slate-50">戻る</button>
-        <button id="btn-final-confirm" onclick="handleFinalBooking()" class="flex-1 py-3 bg-8labo text-white rounded-xl font-black shadow-lg btn-safe-click active:scale-95">確定</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Logout Confirm -->
-  <div id="modal-logout-confirm" class="modal-overlay">
-    <div class="bg-white rounded-[2rem] max-w-sm w-full p-6 shadow-2xl scale-95 transition-all text-center mx-4">
-      <h3 class="text-lg font-black mb-2">ログアウトしますか？</h3>
-      <p class="text-sm text-slate-500 mb-5">保存しているログイン状態を解除します。</p>
-      <div class="flex gap-3">
-        <button onclick="closeModal('modal-logout-confirm')" class="flex-1 py-3 border border-slate-200 rounded-xl font-bold text-slate-500 btn-safe-click hover:bg-slate-50">戻る</button>
-        <button onclick="logout()" class="flex-1 py-3 bg-slate-900 text-white rounded-xl font-black shadow-lg btn-safe-click active:scale-95">ログアウト</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-sm font-black px-5 py-3 rounded-2xl shadow-2xl opacity-0 transition-opacity z-[300000] pointer-events-none text-center"></div>
-
-  <script>
-    // --- 1. GAS API 連携設定（ここだけ差し替え） ---
-    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbxM1nhy7I-crd4GoxZPnkv0S44VeToBn3BL0aP25j-iExU_RYHdeU8d443mXlttzVk1/exec";
-
-    // LocalStorage Key
-    const LOCAL_KEY = "bizfit_master_v1";
-
-    let isLoggedIn = false;
-    let userData = null;
-    let eventsData = [];
-    let ordersData = [];
-    let accompaniments = 0;
-    let selectedEvent = null;
-    let cropper = null;
-
-    // --- ランク条件（必要なら拡張） ---
-    const RANK_CONFIG = [
-      { key: 'ENTRY', min: 0, next: 3 },
-      { key: 'REGULAR', min: 3, next: 10 },
-      { key: 'BRONZE', min: 10, next: 30 },
-      { key: 'SILVER', min: 30, next: 50 },
-      { key: 'GOLD', min: 50, next: 100 },
-      { key: 'PLATINUM', min: 100, next: null }
-    ];
-
-    function getRankInfo(count) {
-      const c = Number(count) || 0;
-      let current = RANK_CONFIG[0];
-      for (const r of RANK_CONFIG) if (c >= r.min) current = r;
-      const progress = current.next ? (c - current.min) / (current.next - current.min) : 1;
-      return { name: current.key, progress, remaining: current.next ? current.next - c : 0, nextRank: RANK_CONFIG[RANK_CONFIG.indexOf(current)+1]?.key };
-    }
-
-    // --- API ---
-    async function apiGet(action, params = {}) {
-      const query = new URLSearchParams({ action, ...params }).toString();
-      const res = await fetch(`${GAS_API_URL}?${query}`, { method: "GET" });
-      return await res.json();
-    }
-
-    async function apiPost(action, data = {}) {
-      const res = await fetch(GAS_API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action, data })
-      });
-      return await res.json();
-    }
-
-    // --- Navigation ---
-    function navigateTo(p) {
-      document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
-      const t = document.getElementById(`page-${p}`);
-      if (t) t.classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      updateHeader(p);
-      if (p === "mypage") refreshAndRenderMyPage();
-    }
-
-    function goHome() {
-      navigateTo(isLoggedIn ? 'dashboard' : 'guest-top');
-    }
-
-    function updateHeader(p) {
-      const nav = document.getElementById('header-nav');
-      if (isLoggedIn && userData) {
-        nav.innerHTML = `
-          <div onclick="navigateTo('mypage')" class="flex items-center gap-2 cursor-pointer p-1 pr-3 hover:bg-slate-50 rounded-full transition-all btn-safe-click">
-            <span class="text-sm font-bold text-slate-600">${escapeHtml(userData.name || "")}</span>
-            <div class="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 shadow-inner">
-              <i data-lucide="user" class="w-4 h-4"></i>
-            </div>
-          </div>`;
-      } else {
-        const label = p === 'login' ? '新規登録' : 'ログイン';
-        const target = p === 'login' ? 'register' : 'login';
-        nav.innerHTML = `
-          <button onclick="navigateTo('${target}')"
-            class="text-xs font-black text-8labo border-2 border-8labo px-4 py-2 rounded-xl transition-colors hover:bg-orange-50 uppercase tracking-widest text-center btn-safe-click">
-            ${label}
-          </button>`;
-      }
-      lucide.createIcons();
-    }
-
-    // --- Render Events ---
-    async function loadEvents() {
-      const res = await apiGet("getEventsData");
-      if (!res.success) throw new Error(res.message || "getEventsData failed");
-      eventsData = res.events || [];
-      if (res.calendarUrl) document.getElementById("calendar-iframe").src = res.calendarUrl;
-    }
-
-    async function loadOrdersForMe() {
-      if (!userData?.email) { ordersData = []; return; }
-      const res = await apiGet("getOrders", { email: userData.email });
-      ordersData = (res.success && res.orders) ? res.orders : [];
-    }
-
-    async function renderEvents() {
-      const grids = [document.getElementById('guest-event-grid'), document.getElementById('member-event-grid')];
-
-      grids.forEach((grid, idx) => {
-        if (!grid) return;
-        const isMemberView = idx === 1;
-
-        grid.innerHTML = eventsData.map(e => {
-          const isBooked = isMemberView && ordersData.some(o => o.eventId === e.id && o.status !== 'キャンセル');
-          const rem = (Number(e.capacity)||0) - (Number(e.enrollees)||0);
-          const cPrice = (Number(e.personalPrice) !== Number(e.companionPrice) && Number(e.maxAccompaniments) > 0)
-            ? `<span class="text-[10px] text-slate-400 font-bold ml-1">(同伴 ¥${Number(e.companionPrice).toLocaleString()})</span>` : "";
-
-          return `
-          <div class="bg-white rounded-[2rem] border border-slate-200 p-6 card-hover transition-all flex flex-col justify-between h-full shadow-sm text-left event-card">
-            <div class="space-y-4 text-left">
-              <div class="flex justify-between items-center">
-                <span class="text-sm font-black bg-orange-50 text-8labo px-3 py-1 rounded-lg tracking-tight">${escapeHtml(e.date)}</span>
-                <span class="text-[10px] font-bold ${rem<=0?'text-red-500 bg-red-50':'text-slate-400 bg-slate-50'} px-2 py-1 rounded-md">
-                  ${rem<=0?'満員':`残り ${rem} 名`}
-                </span>
-              </div>
-
-              <div class="space-y-1">
-                <div class="flex items-start gap-3 justify-between">
-                  <h4 class="font-black text-slate-800 text-lg leading-tight flex-grow break-words">${escapeHtml(e.title)}</h4>
-
-                  <!-- ここ重要：event参照を使わない -->
-                  <button onclick="openDetailModal('${escapeAttr(e.id)}')"
-                    class="shrink-0 w-8 h-8 flex items-center justify-center bg-slate-50 text-slate-300 hover:text-8labo rounded-full transition-colors btn-safe-click">
-                    <i data-lucide="info" class="w-4 h-4"></i>
-                  </button>
-                </div>
-
-                <div class="price-align-row">
-                  <p class="text-8labo font-black text-xl tracking-tighter">${escapeHtml(e.time)}</p>
-                  <div class="text-8labo font-black text-sm text-right">
-                    <span>¥${Number(e.personalPrice||0).toLocaleString()}</span>${cPrice}
-                  </div>
-                </div>
-              </div>
-
-              <div class="flex items-center justify-between bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                <p class="text-[11px] text-slate-500 font-bold flex items-center gap-1 min-w-0">
-                  <i data-lucide="map-pin" class="w-3 h-3 text-8labo/50"></i>
-                  <span class="truncate">${escapeHtml(e.location || "")}</span>
-                </p>
-
-                <button onclick="openMapModal('${escapeAttr(e.id)}')"
-                  class="text-[9px] bg-white border border-slate-200 text-slate-400 px-2 py-1 rounded-lg font-black shadow-sm transition-all hover:border-8labo uppercase tracking-widest btn-safe-click">
-                  MAP
-                </button>
-              </div>
-            </div>
-
-            <div class="mt-4">
-              ${
-                isMemberView
-                  ? (
-                      isBooked
-                        ? `<div class="w-full py-4 bg-green-50 text-green-600 rounded-2xl text-sm font-black text-center flex items-center justify-center gap-2 shadow-inner">
-                             <i data-lucide="check-circle" class="w-4 h-4"></i> 予約済み
-                           </div>`
-                        : `<button onclick="confirmAction('${escapeAttr(e.id)}')" ${rem<=0?'disabled':''}
-                             class="w-full py-4 ${rem<=0?'bg-slate-100 text-slate-300':'bg-8labo text-white shadow-lg active:scale-95'} rounded-2xl text-sm font-black transition-all btn-safe-click">
-                             申し込む
-                           </button>`
-                    )
-                  : `<button onclick="navigateTo('login')"
-                       class="w-full py-4 bg-slate-900 text-white rounded-2xl text-sm font-black shadow-lg active:scale-95 btn-safe-click">
-                       ログインして予約
-                     </button>`
-              }
-            </div>
-          </div>
-          `;
-        }).join("");
-      });
-
-      lucide.createIcons();
-    }
-
-    // --- Detail / Map / Booking ---
-    let detailMapUrl = "";
-
-    function openDetailModal(id) {
-      selectedEvent = eventsData.find(x => x.id === id);
-      if (!selectedEvent) return;
-
-      document.getElementById('detail-title').innerText = selectedEvent.title || "";
-      document.getElementById('detail-description').innerText = selectedEvent.description || "";
-      document.getElementById('detail-price-text').innerText = `¥${Number(selectedEvent.personalPrice||0).toLocaleString()}`;
-      document.getElementById('detail-point-text').innerText = `${Number(selectedEvent.selfPoints||0)} pt`;
-
-      document.getElementById('detail-location').innerText = selectedEvent.location || "";
-      document.getElementById('detail-address').innerText = selectedEvent.address || "";
-      detailMapUrl = selectedEvent.mapUrl || "";
-
-      // 画像が無い場合も崩れないように（デザインは維持）
-      const imgEl = document.getElementById('detail-img');
-      if (selectedEvent.img) imgEl.src = selectedEvent.img;
-      else imgEl.removeAttribute("src");
-
-      openModal('modal-detail');
-    }
-
-    function openMapFromDetail() {
-      if (detailMapUrl) window.open(detailMapUrl, "_blank");
-      else showToast("マップURLが未設定です");
-    }
-
-    function openMapModal(id) {
-      const e = eventsData.find(x => x.id === id);
-      if (!e) return;
-      if (e.mapUrl) window.open(e.mapUrl, "_blank");
-      else showToast("マップURLが未設定です");
-    }
-
-    function confirmAction(id) {
-      selectedEvent = eventsData.find(x => x.id === id);
-      if (!selectedEvent) return;
-
-      accompaniments = 0;
-      const cs = document.getElementById('companion-section');
-      if (Number(selectedEvent.maxAccompaniments) > 0) cs.classList.remove('hidden');
-      else cs.classList.add('hidden');
-
-      document.getElementById('confirm-details').innerHTML =
-        `<p class="font-black text-slate-800 text-sm leading-tight mb-1.5 break-words">${escapeHtml(selectedEvent.title || "")}</p>
-         <div class="text-[10px] text-slate-400 font-medium leading-tight">
-           <p>${escapeHtml(selectedEvent.date || "")} / ${escapeHtml(selectedEvent.time || "")}</p>
-           <p>場所: ${escapeHtml(selectedEvent.location || "")}</p>
-         </div>`;
-
-      const chk = document.getElementById('consent-check');
-      if (chk) chk.checked = false;
-
-      updateCounterUI();
-      openModal('modal-confirm');
-    }
-
-    function changeAccompaniments(v) {
-      const max = Number(selectedEvent?.maxAccompaniments || 0);
-      const nv = accompaniments + v;
-      if (nv >= 0 && nv <= max) {
-        accompaniments = nv;
-        updateCounterUI();
-      }
-    }
-
-    function updateCounterUI() {
-      const ce = document.getElementById('accompaniment-count');
-      if (ce) ce.innerText = String(accompaniments);
-
-      document.getElementById('summary-total-count').innerText = (1 + accompaniments) + "名";
-      const tp = Number(selectedEvent?.personalPrice || 0) + (Number(selectedEvent?.companionPrice || 0) * accompaniments);
-      document.getElementById('summary-total-price').innerText = tp.toLocaleString() + "円";
-
-      const wm = document.getElementById('companion-warning');
-      const ca = document.getElementById('consent-area');
-
-      if (accompaniments >= 1) { wm.classList.remove('hidden'); ca.classList.remove('hidden'); }
-      else { wm.classList.add('hidden'); ca.classList.add('hidden'); }
-
-      toggleBookingButton();
-    }
-
-    function toggleBookingButton() {
-      const btn = document.getElementById('btn-final-confirm');
-      const chk = document.getElementById('consent-check');
-      if (!btn) return;
-      if (accompaniments >= 1 && chk && !chk.checked) btn.classList.add('opacity-20', 'pointer-events-none');
-      else btn.classList.remove('opacity-20', 'pointer-events-none');
-    }
-
-    async function handleFinalBooking() {
-      if (!selectedEvent || !userData) return;
-
-      const payload = {
-        eventId: selectedEvent.id,
-        email: userData.email,
-        userName: userData.name,
-        companionCount: accompaniments
-      };
-
-      const res = await apiPost("recordBooking", payload);
-      if (!res.success) {
-        showToast(res.message || "予約に失敗しました");
-        return;
-      }
-
-      closeModal('modal-confirm');
-      showToast("予約を確定しました");
-
-      await reloadAll();
-      renderEvents();
-    }
-
-    // --- Login / Register ---
-    async function handleLoginSubmit() {
-      const email = document.getElementById('login-email').value.trim().toLowerCase();
-      const password = document.getElementById('login-password').value.trim();
-
-      try {
-        const res = await apiGet("login", { email, password });
-        if (!res.success) {
-          alert("ログインに失敗しました（メールまたはパスワード）");
-          return;
-        }
-        userData = normalizeUser(res.user);
-        isLoggedIn = true;
-        saveAppToLocal();
-        await reloadAll();
-        navigateTo('dashboard');
-      } catch (e) {
-        console.error(e);
-        alert("ログインに失敗しました（通信エラー）");
-      }
-    }
-
-    async function handleRegisterSubmit(form) {
-      const data = Object.fromEntries(new FormData(form).entries());
-      data.email = (data.email || "").trim().toLowerCase();
-
-      try {
-        const res = await apiPost("registerUser", data);
-        if (!res.success) {
-          alert(res.message || "登録に失敗しました");
-          return;
-        }
-        userData = normalizeUser(res.user);
-        isLoggedIn = true;
-        saveAppToLocal();
-        await reloadAll();
-        navigateTo('dashboard');
-        showToast("登録しました");
-      } catch (e) {
-        console.error(e);
-        alert("登録に失敗しました（通信エラー）");
-      }
-    }
-
-    function normalizeUser(u) {
-      if (!u) return null;
-      return {
-        name: u.name || "",
-        email: u.email || "",
-        password: u.password || "",
-        age: u.age || "",
-        gender: u.gender || "",
-        industry: u.industry || "",
-        purpose: u.purpose || "",
-        attendanceCount: Number(u.attendanceCount || 0),
-        points: Number(u.points || 0),
-        profileImage: u.profileImage || "",
-        plan: "FREE"
-      };
-    }
-
-    // --- MyPage ---
-    function refreshAndRenderMyPage() {
-      updateMyPageUI();
-      renderBookedEvents();
-    }
-
-    function updateMyPageUI() {
-      if (!userData) return;
-      document.getElementById('profile-name').innerText = userData.name + " 様";
-      document.getElementById('profile-email').innerText = userData.email;
-
-      document.getElementById('stat-attendance-count').innerHTML = `${userData.attendanceCount}<span class="text-sm ml-0.5">回</span>`;
-      document.getElementById('stat-points').innerHTML = `${Number(userData.points).toLocaleString()}<span class="text-sm ml-0.5">pt</span>`;
-
-      applyProfileImageToUI(userData.profileImage);
-    }
-
-    function renderBookedEvents() {
-      const container = document.getElementById('booked-event-list');
-      const myo = ordersData.filter(o => o.status !== 'キャンセル');
-
-      if (myo.length === 0) {
-        container.innerHTML = `<div class="bg-slate-50 border-2 border-dashed border-slate-100 rounded-3xl p-8 text-center text-slate-300 font-bold text-sm">予約中のイベントはありません</div>`;
-        return;
-      }
-
-      container.innerHTML = myo.map(order => {
-        const e = eventsData.find(x => x.id === order.eventId);
-        if (!e) return "";
-        return `
-          <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex items-center justify-between gap-4 overflow-hidden">
-            <div class="min-w-0 flex-grow">
-              <h4 class="font-bold text-sm text-slate-800 leading-tight break-words">${escapeHtml(e.title || "")}</h4>
-              <div class="flex flex-wrap items-center gap-2 mt-1">
-                <p class="text-[10px] text-slate-400 font-medium">@ ${escapeHtml(e.location || "")}</p>
-                <span class="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded font-black text-slate-500">合計 ${1 + Number(order.companionCount||0)}名</span>
-                <span class="text-[10px] bg-orange-50 px-1.5 py-0.5 rounded font-black text-8labo uppercase tracking-tighter">${escapeHtml(order.status||"")}</span>
-              </div>
-            </div>
-          </div>`;
-      }).join("");
-    }
-
-    // --- Profile Photo (optional) ---
-    function triggerPhotoUpload() { document.getElementById('profile-photo-input').click(); }
-
-    function handlePhotoChange(input) {
-      const file = input.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = document.getElementById('crop-image');
-        img.src = e.target.result;
-        openModal('modal-crop');
-        if (cropper) cropper.destroy();
-        cropper = new Cropper(img, {
-          aspectRatio: 1, viewMode: 1, dragMode: 'move', autoCropArea: 1, restore: false,
-          guides: false, center: false, highlight: false, cropBoxMovable: false, cropBoxResizable: false,
-          toggleDragModeOnDblclick: false
-        });
-      };
-      reader.readAsDataURL(file);
-    }
-
-    async function saveCroppedImage() {
-      if (!cropper || !userData?.email) return;
-      const canvas = cropper.getCroppedCanvas({ width: 256, height: 256 });
-      const b64 = canvas.toDataURL('image/jpeg');
-
-      const res = await apiPost("saveProfileImage", { email: userData.email, profileImage: b64 });
-      if (res.success) {
-        userData.profileImage = b64;
-        saveAppToLocal();
-        applyProfileImageToUI(b64);
-        closeModal('modal-crop');
-        showToast("写真を保存しました");
-      } else {
-        showToast("写真保存に失敗しました");
-      }
-    }
-
-    function applyProfileImageToUI(b64) {
-      const img = document.getElementById('profile-img-preview');
-      const placeholder = document.getElementById('profile-img-placeholder');
-      if (b64) { img.src = b64; img.classList.remove('hidden'); placeholder.classList.add('hidden'); }
-      else { img.classList.add('hidden'); placeholder.classList.remove('hidden'); }
-    }
-
-    // --- Modal / Toast ---
-    function openModal(id) {
-      const m = document.getElementById(id);
-      if (!m) return;
-      m.classList.add('active');
-      setTimeout(() => {
-        const d = m.querySelector('div');
-        if (d) d.classList.remove('scale-95');
-      }, 10);
-      lucide.createIcons();
-    }
-
-    function closeModal(id) {
-      const m = document.getElementById(id);
-      if (!m) return;
-      const d = m.querySelector('div');
-      if (d) d.classList.add('scale-95');
-      setTimeout(() => m.classList.remove('active'), 200);
-    }
-
-    function showToast(m) {
-      const t = document.getElementById('toast');
-      if (!t) return;
-      t.innerText = m;
-      t.style.opacity = '1';
-      setTimeout(() => t.style.opacity = '0', 3000);
-    }
-
-    // --- Storage / Logout ---
-    function saveAppToLocal() {
-      localStorage.setItem(LOCAL_KEY, JSON.stringify({ userData, isLoggedIn }));
-    }
-
-    function loadAppFromLocal() {
-      const saved = localStorage.getItem(LOCAL_KEY);
-      if (!saved) return false;
-      try {
-        const p = JSON.parse(saved);
-        userData = p.userData || null;
-        isLoggedIn = !!p.isLoggedIn;
-        return true;
-      } catch {
-        return false;
-      }
-    }
-
-    function logout() {
-      isLoggedIn = false;
-      userData = null;
-      ordersData = [];
-      localStorage.removeItem(LOCAL_KEY);
-      closeModal('modal-logout-confirm');
-      goHome();
-      showToast("ログアウトしました");
-    }
-
-    function devReset() {
-      localStorage.removeItem(LOCAL_KEY);
-      location.reload();
-    }
-
-    async function reloadAll() {
+    <label for="jobSelect">業種</label>
+    <select id="jobSelect">
+      <option value="">選択</option>
+      <option>会社員</option><option>自営業</option><option>公務員</option><option>学生</option><option>主婦/主夫</option><option>その他</option>
+    </select>
+
+    <label for="purposeSelect">目的</label>
+    <select id="purposeSelect">
+      <option value="">選択</option>
+      <option>運動不足解消</option><option>健康維持</option><option>交流</option><option>体力向上</option><option>その他</option>
+    </select>
+
+    <label for="referrerInput">紹介者名（任意）</label>
+    <input id="referrerInput" type="text" />
+
+    <label for="lineUserIdInput">LINE_UserID（任意）</label>
+    <input id="lineUserIdInput" type="text" />
+
+    <div style="height:12px"></div>
+
+    <button class="btn primary" id="registerBtn">登録を完了してはじめる</button>
+    <div id="registerMsg" class="muted" style="margin-top:10px;"></div>
+  </section>
+
+</div>
+
+<script>
+  /** ★あなたのデプロイURLを埋め込み済み */
+  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyG2Z4cs8AUnzbLI_TH8sSdIVPfe5ziITlZU_R8szJjHOlB4wK3UrE2SJuJWm8rNOP3sA/exec";
+
+  // 通信：CORS対策で x-www-form-urlencoded の POST（プリフライト回避）
+  async function api(action, params = {}) {
+    const body = new URLSearchParams({ action, ...params });
+
+    const res = await fetch(GAS_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+      body
+    });
+
+    // ここで通信エラーを拾う（iPhoneで「通信エラー」になる原因の切り分けに重要）
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message || "API error");
+    return json.data;
+  }
+
+  function show(id) {
+    document.getElementById("viewEvents").classList.add("hidden");
+    document.getElementById("viewRegister").classList.add("hidden");
+    document.getElementById(id).classList.remove("hidden");
+  }
+
+  document.getElementById("toRegisterBtn").addEventListener("click", () => show("viewRegister"));
+  document.getElementById("toEventsBtn").addEventListener("click", () => { show("viewEvents"); loadEvents(); });
+
+  // 初期疎通確認（「初期読み込みに失敗しました」を潰す）
+  (async () => {
+    try {
+      await api("ping");
+      // OKならイベント一覧を読み込み
       await loadEvents();
-      if (isLoggedIn && userData?.email) {
-        await loadOrdersForMe();
+    } catch (e) {
+      document.getElementById("eventsLoading").innerHTML =
+        `<span class="danger">初期読み込みに失敗しました。</span><br>GAS_API_URL とデプロイ設定を確認してください。<br><span class="muted">${escapeHtml(String(e))}</span>`;
+    }
+  })();
 
-        // ログイン後はサーバーの名簿から最新ポイント等も取り直す
-        const u = await apiGet("getUserData", { email: userData.email });
-        if (u.success && u.user) userData = normalizeUser(u.user);
+  async function loadEvents() {
+    const loading = document.getElementById("eventsLoading");
+    const listEl = document.getElementById("eventsList");
+    loading.textContent = "読み込み中…";
+    listEl.innerHTML = "";
 
-        saveAppToLocal();
-        updateMyPageUI();
-      } else {
-        ordersData = [];
+    try {
+      const events = await api("listEvents");
+      loading.textContent = "";
+
+      if (!events.length) {
+        listEl.innerHTML = `<div class="muted">イベントがありません</div>`;
+        return;
       }
+
+      events.forEach(ev => {
+        const disabled = (ev.remain <= 0);
+        const mapBtn = ev.mapUrl ? `<button class="btn ghost js-map" data-url="${encodeURIComponent(ev.mapUrl)}">MAP</button>` : "";
+        const detailBtn = `<button class="btn ghost js-detail" data-id="${escapeAttr(ev.eventId)}">詳細</button>`;
+        const applyBtn = `<button class="btn ${disabled ? "ghost" : "primary"} js-apply" data-id="${escapeAttr(ev.eventId)}" ${disabled ? "disabled" : ""}>申し込み</button>`;
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="event-title">${escapeHtml(ev.name)} <span class="pill">${escapeHtml(ev.status || "—")}</span></div>
+          <div class="event-meta">
+            ${escapeHtml(ev.date)} ${escapeHtml(ev.time)}<br>
+            ${escapeHtml(ev.facility || "")} ${escapeHtml(ev.room || "")}<br>
+            残り：<span class="${disabled ? "danger" : "ok"}">${ev.remain}</span> / ${ev.capacity}
+          </div>
+          <div class="event-detail hidden" id="detail-${escapeAttr(ev.eventId)}"></div>
+          <div class="actions">
+            ${detailBtn}
+            ${mapBtn}
+            ${applyBtn}
+          </div>
+        `;
+        listEl.appendChild(card);
+      });
+
+      // ★「反応しない」を潰す：描画後に必ずイベントリスナーを付け直す
+      listEl.querySelectorAll(".js-map").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const url = decodeURIComponent(btn.dataset.url || "");
+          if (url) window.open(url, "_blank");
+        });
+      });
+
+      listEl.querySelectorAll(".js-detail").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.dataset.id;
+          const detailEl = document.getElementById(`detail-${id}`);
+          if (!detailEl) return;
+
+          // トグル表示
+          const isHidden = detailEl.classList.contains("hidden");
+          if (!isHidden) {
+            detailEl.classList.add("hidden");
+            return;
+          }
+
+          // 開く時に詳細を取得（既に入っていれば再取得しない）
+          if (!detailEl.dataset.loaded) {
+            const ev = await api("getEvent", { eventId: id });
+            detailEl.textContent = ev.detail || "（詳細なし）";
+            detailEl.dataset.loaded = "1";
+          }
+          detailEl.classList.remove("hidden");
+        });
+      });
+
+      listEl.querySelectorAll(".js-apply").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.dataset.id;
+          const memberId = localStorage.getItem("memberId") || "";
+          const name = localStorage.getItem("name") || "";
+
+          if (!memberId || !name) {
+            alert("先に新規登録を行ってください（会員IDを発行します）");
+            show("viewRegister");
+            return;
+          }
+
+          const companions = prompt("同伴人数（0以上の数字）", "0");
+          const n = Math.max(0, parseInt(companions || "0", 10) || 0);
+
+          try {
+            await api("applyEvent", { eventId: id, memberId, name, companions: String(n) });
+            alert("申し込みが完了しました");
+            await loadEvents();
+          } catch (e) {
+            alert("申し込みに失敗しました：" + e.message);
+          }
+        });
+      });
+
+    } catch (e) {
+      loading.innerHTML = `<span class="danger">イベントの取得に失敗しました</span><br><span class="muted">${escapeHtml(String(e))}</span>`;
+    }
+  }
+
+  document.getElementById("registerBtn").addEventListener("click", async () => {
+    const msg = document.getElementById("registerMsg");
+    msg.textContent = "";
+
+    const name = document.getElementById("nameInput").value.trim();
+    const kana = document.getElementById("kanaInput").value.trim();
+    const email = document.getElementById("emailInput").value.trim();
+    const age = document.getElementById("ageSelect").value.trim();
+    const gender = document.getElementById("genderSelect").value.trim();
+    const job = document.getElementById("jobSelect").value.trim();
+    const purpose = document.getElementById("purposeSelect").value.trim();
+    const referrer = document.getElementById("referrerInput").value.trim();
+    const lineUserId = document.getElementById("lineUserIdInput").value.trim();
+
+    if (!name || !kana || !email) {
+      msg.innerHTML = `<span class="danger">氏名・ふりがな・メールアドレスは必須です。</span>`;
+      return;
     }
 
-    // --- Security helpers ---
-    function escapeHtml(str) {
-      return String(str ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+    try {
+      msg.textContent = "登録中…";
+      const r = await api("registerMember", { name, kana, email, age, gender, job, purpose, referrer, lineUserId });
+
+      // 端末に保存（イベント申込で使う）
+      localStorage.setItem("memberId", r.memberId);
+      localStorage.setItem("password", r.password);
+      localStorage.setItem("name", name);
+
+      msg.innerHTML = `<span class="ok">登録完了！</span><br>会員ID：<b>${escapeHtml(r.memberId)}</b><br>パスワード：<b>${escapeHtml(r.password)}</b>`;
+      alert(`登録完了\n会員ID：${r.memberId}\nパスワード：${r.password}\n（端末に保存しました）`);
+
+      show("viewEvents");
+      await loadEvents();
+    } catch (e) {
+      msg.innerHTML = `<span class="danger">登録に失敗しました（通信エラー）</span><br><span class="muted">${escapeHtml(e.message)}</span>`;
     }
-    function escapeAttr(str) {
-      return String(str ?? "").replaceAll("'", "\\'");
-    }
+  });
 
-    // --- Boot ---
-    window.onload = async () => {
-      try {
-        await loadEvents();
-        const hasLocal = loadAppFromLocal();
-
-        if (hasLocal && isLoggedIn && userData?.email) {
-          await reloadAll();
-          navigateTo('dashboard');
-        } else {
-          isLoggedIn = false;
-          userData = null;
-          ordersData = [];
-          navigateTo('guest-top');
-        }
-
-        await renderEvents();
-        lucide.createIcons();
-      } catch (e) {
-        console.error(e);
-        alert("初期読み込みに失敗しました。GAS_API_URL とデプロイ設定を確認してください。");
-      }
-    };
-  </script>
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+  }
+  function escapeAttr(s){
+    return String(s).replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+</script>
 </body>
 </html>
