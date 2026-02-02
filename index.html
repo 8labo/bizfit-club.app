@@ -186,6 +186,20 @@
         html {
             scroll-padding-top: 72px;
         }
+        .count-change {
+            animation: scale-pulse 0.2s ease-out;
+        }
+        @keyframes scale-pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
     </style>
 </head>
 <body class="text-slate-800 text-left">
@@ -402,45 +416,69 @@
         </div>
     </div>
     <div id="modal-confirm" class="modal-overlay">
-        <div class="bg-white rounded-[2rem] max-w-sm w-full p-6 shadow-2xl text-center mx-4">
-            <h3 class="text-lg font-black mb-3">申し込み内容の確認</h3>
+        <div class="bg-white rounded-[2rem] max-w-sm w-full p-6 shadow-2xl scale-95 transition-all text-center mx-4">
+            <h3 class="text-lg font-black mb-3 text-slate-800 text-center">申し込み内容の確認</h3>
             <div id="confirm-details"
                 class="bg-slate-50 p-3 rounded-2xl text-left space-y-0.5 mb-4 border border-slate-100 text-sm"></div>
+            <!-- 同伴不可イベント用ヒント -->
+            <div id="no-companion-hint" class="hidden fade-in-ui text-[10px] font-bold text-slate-400 text-center mb-4">
+                ※このイベントは同伴者の追加ができません</div>
             <div id="companion-section" class="mb-5 space-y-4 text-center">
-                <div class="space-y-1.5 text-center text-center">
+                <div class="space-y-1.5 text-center">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">同伴者数を選択</p>
-                    <div class="flex items-center justify-center gap-5 text-center"><button
-                            onclick="changeAccompaniments(-1)"
-                            class="w-10 h-10 bg-white border-2 border-slate-100 rounded-xl flex items-center justify-center"><i
+                    <div class="flex items-center justify-center gap-5 text-center">
+                        <button onclick="changeAccompaniments(-1)"
+                            class="w-10 h-10 bg-white border-2 border-slate-100 rounded-xl flex items-center justify-center btn-safe-click active:scale-90 shadow-sm hover:border-8labo"><i
                                 data-lucide="minus" class="w-5 h-5"></i></button>
-                        <div class="min-w-[3.5rem] text-center text-center"><span id="accompaniment-count"
-                                class="text-3xl font-black text-slate-800 leading-none">0</span><span
-                                class="text-[9px] font-bold text-slate-400 mt-0.5">名</span></div><button
-                            onclick="changeAccompaniments(1)"
-                            class="w-10 h-10 bg-white border-2 border-slate-100 rounded-xl flex items-center justify-center"><i
+                        <div class="flex flex-col items-center min-w-[3.5rem] text-center">
+                            <span id="accompaniment-count"
+                                class="text-3xl font-black text-slate-800 leading-none">0</span>
+                            <span class="text-[9px] font-bold text-slate-400 mt-0.5">名</span>
+                        </div>
+                        <button onclick="changeAccompaniments(1)"
+                            class="w-10 h-10 bg-white border-2 border-slate-100 rounded-xl flex items-center justify-center btn-safe-click active:scale-90 shadow-sm hover:border-8labo"><i
                                 data-lucide="plus" class="w-5 h-5"></i></button>
                     </div>
-                    <p id="companion-warning" class="hidden fade-in-ui text-[10px] font-bold text-red-500 px-2 mt-3">
+                    <p id="companion-max-hint" class="text-[9px] text-slate-300 font-medium italic">※最大◯名まで同伴可能</p>
+                    <p id="companion-warning"
+                        class="hidden fade-in-ui text-[10px] font-bold text-red-500 px-2 mt-3 text-center">
                         ※同伴者価格は、新規の方またはご家族(お子様)に限定されます。</p>
                 </div>
-                <div id="consent-area" class="hidden fade-in-ui px-1 flex justify-center"><label
-                        class="flex items-start gap-2 cursor-pointer group text-center"><input type="checkbox"
-                            id="consent-check" onchange="toggleBookingButton()" class="mt-0.5 w-4 h-4 rounded"><span
-                            class="text-[10px] font-bold text-slate-500 leading-tight">確認しました</span></label></div>
-                <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-2 text-left">
-                    <div class="flex justify-between items-center"><span
-                            class="text-[11px] font-bold text-slate-500">合計人数</span><span id="summary-total-count"
-                            class="text-xl font-black">1名</span></div>
-                    <div class="flex justify-between items-center"><span
-                            class="text-[11px] font-bold text-slate-400 text-left text-left">合計金額</span><span
-                            id="summary-total-price" class="text-xl font-black text-8labo text-right">0円</span></div>
+                <div id="consent-area" class="hidden fade-in-ui px-1 flex justify-center text-left">
+                    <label class="flex items-start gap-2 cursor-pointer group text-center">
+                        <input type="checkbox" id="consent-check" onchange="toggleBookingButton()"
+                            class="mt-0.5 w-4 h-4 rounded btn-safe-click accent-orange-500">
+                        <span
+                            class="text-[10px] font-bold text-slate-500 leading-tight group-hover:text-8labo transition-colors">同伴者は非会員であることを確認しました</span>
+                    </label>
+                </div>
+                <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-3 text-left">
+                    <div class="flex justify-between items-center px-1 text-slate-800">
+                        <span class="text-[11px] font-bold text-slate-500 tracking-tight">予約合計人数</span>
+                        <div class="text-right leading-none">
+                            <span id="summary-total-count"
+                                class="text-2xl font-black text-slate-800 tracking-tighter">1</span>
+                            <span class="text-[10px] font-bold text-slate-500 ml-0.5">名</span>
+                        </div>
+                    </div>
+                    <div class="h-px bg-slate-200 w-full opacity-40"></div>
+                    <div class="flex justify-between items-center px-1 opacity-80">
+                        <span class="text-[11px] font-bold text-slate-400 tracking-tight">合計金額</span>
+                        <div class="text-right leading-none">
+                            <span id="summary-total-price"
+                                class="text-base font-black text-slate-500 tracking-tighter text-8labo">0</span>
+                            <span class="text-[9px] font-bold text-slate-400 ml-1">円</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="flex gap-3 text-center text-center"><button onclick="closeModal('modal-confirm')"
-                    class="flex-1 py-3 border border-slate-200 rounded-xl font-bold hover:bg-slate-50 transition-all">戻る</button><button
-                    id="btn-final-confirm" onclick="handleFinalBooking()"
-                    class="flex-1 py-3 bg-8labo text-white rounded-xl font-black shadow-lg active:scale-95 text-center">確定</button>
+            <div class="flex gap-3 text-center text-center">
+                <button onclick="closeModal('modal-confirm')"
+                    class="flex-1 py-3 border border-slate-200 rounded-2xl font-bold text-slate-500 hover:bg-slate-50 transition-all btn-safe-click text-sm">戻る</button>
+                <button id="btn-final-confirm" onclick="handleFinalBooking()"
+                    class="flex-1 py-3 bg-8labo text-white rounded-2xl font-black shadow-lg shadow-orange-500/20 active:scale-95 text-center text-sm btn-safe-click">予約を確定</button>
             </div>
+            <p class="text-[10px] text-slate-400 text-center mt-3">※お支払いは当日、現地にて承ります</p>
         </div>
     </div>
     <div id="modal-detail" class="modal-overlay">
@@ -619,16 +657,48 @@
         function confirmAction(id) {
             selectedEvent = eventsData.find(x => x.id == id); accompaniments = 0;
             const maxAcc = Number(selectedEvent.maxAccompaniments) || 0;
-            if (maxAcc > 0) { document.getElementById('companion-section').classList.remove('hidden'); } else { document.getElementById('companion-section').classList.add('hidden'); }
+            const cs = document.getElementById('companion-section');
+            const nh = document.getElementById('no-companion-hint');
+            const maxHint = document.getElementById('companion-max-hint');
+            if (maxAcc > 0) {
+                if (cs) cs.classList.remove('hidden');
+                if (nh) nh.classList.add('hidden');
+                if (maxHint) maxHint.innerText = `※最大${maxAcc}名まで同伴可能`;
+            } else {
+                if (cs) cs.classList.add('hidden');
+                if (nh) nh.classList.remove('hidden');
+            }
             document.getElementById('confirm-details').innerHTML = `<p class="font-black text-slate-800 text-sm leading-tight mb-1.5 break-words text-left text-left">${selectedEvent.title}</p><div class="text-[10px] text-slate-400 font-medium leading-tight text-left text-left text-left"><p>${selectedEvent.date} / ${selectedEvent.time}</p><p>場所: ${selectedEvent.location}</p></div>`;
+            const chk = document.getElementById('consent-check');
+            if (chk) chk.checked = false;
             updateCounterUI(); openModal('modal-confirm');
         }
-        function changeAccompaniments(v) { accompaniments = Math.max(0, Math.min(selectedEvent.maxAccompaniments, accompaniments + v)); updateCounterUI(); }
+        function changeAccompaniments(v) {
+            const maxAcc = Number(selectedEvent.maxAccompaniments) || 0;
+            const nv = accompaniments + v;
+            if (nv >= 0 && nv <= maxAcc) {
+                accompaniments = nv;
+                updateCounterUI();
+                const el = document.getElementById('accompaniment-count');
+                if (el) {
+                    el.classList.remove('count-change');
+                    void el.offsetWidth; // trigger reflow
+                    el.classList.add('count-change');
+                }
+            }
+        }
         function updateCounterUI() {
-            document.getElementById('accompaniment-count').innerText = accompaniments; document.getElementById('summary-total-count').innerText = (1 + accompaniments) + "名";
-            document.getElementById('summary-total-price').innerText = (selectedEvent.personalPrice + (selectedEvent.companionPrice * accompaniments)).toLocaleString() + "円";
-            if (accompaniments >= 1) { document.getElementById('companion-warning').classList.remove('hidden'); document.getElementById('consent-area').classList.remove('hidden'); }
-            else { document.getElementById('companion-warning').classList.add('hidden'); document.getElementById('consent-area').classList.add('hidden'); }
+            document.getElementById('accompaniment-count').innerText = accompaniments;
+            document.getElementById('summary-total-count').innerText = (1 + accompaniments) + "名";
+            const total = selectedEvent.personalPrice + (selectedEvent.companionPrice * accompaniments);
+            document.getElementById('summary-total-price').innerText = total.toLocaleString();
+            if (accompaniments >= 1) {
+                document.getElementById('companion-warning').classList.remove('hidden');
+                document.getElementById('consent-area').classList.remove('hidden');
+            } else {
+                document.getElementById('companion-warning').classList.add('hidden');
+                document.getElementById('consent-area').classList.add('hidden');
+            }
             toggleBookingButton();
         }
         function toggleBookingButton() { const btn = document.getElementById('btn-final-confirm'); const chk = document.getElementById('consent-check'); if (accompaniments >= 1 && !chk.checked) btn.classList.add('opacity-20', 'pointer-events-none'); else btn.classList.remove('opacity-20', 'pointer-events-none'); }
