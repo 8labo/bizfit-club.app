@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BizFitクラブ</title>
+    <title>BizFitクラブ | 8LABO プロトタイプ V46</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap"
@@ -329,12 +329,13 @@
                                         class="w-full h-full object-cover rounded-[1.25rem] hidden">
                                     <div id="profile-img-placeholder"
                                         class="w-full h-full bg-slate-50 rounded-[1.25rem] flex items-center justify-center text-slate-300">
-                                        <i data-lucide="user" class="w-12 h-12"></i></div>
+                                        <i data-lucide="user" class="w-12 h-12"></i>
+                                    </div>
                                 </div>
                                 <div
                                     class="absolute bottom-1 right-1 w-8 h-8 bg-8labo text-white rounded-full flex items-center justify-center border-4 border-white shadow-lg">
-                                    <i data-lucide="camera" class="w-4 h-4"></i></div><input type="file"
-                                    id="profile-photo-input" class="hidden" accept="image/*"
+                                    <i data-lucide="camera" class="w-4 h-4"></i>
+                                </div><input type="file" id="profile-photo-input" class="hidden" accept="image/*"
                                     onchange="handlePhotoChange(this)">
                             </div>
                             <div class="profile-meta space-y-1 text-center md:text-left">
@@ -363,13 +364,15 @@
                                     <span
                                         class="block text-[10px] text-slate-400 font-black mb-1 uppercase tracking-widest text-center">参加回数</span><span
                                         class="text-3xl font-black text-8labo" id="stat-attendance-count">0<span
-                                            class="text-sm ml-0.5">回</span></span></div>
+                                            class="text-sm ml-0.5">回</span></span>
+                                </div>
                                 <div
                                     class="flex-1 text-center bg-slate-50 px-5 py-4 rounded-[2rem] border border-slate-100 shadow-inner min-w-[130px] text-center">
                                     <span
                                         class="block text-[10px] text-slate-400 font-black mb-1 uppercase tracking-widest text-center">累計ポイント</span><span
                                         class="text-3xl font-black text-slate-700 text-center" id="stat-points">0<span
-                                            class="text-sm ml-0.5 text-center">pt</span></span></div>
+                                            class="text-sm ml-0.5 text-center">pt</span></span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -483,7 +486,8 @@
         <div class="bg-white rounded-[2rem] max-sm w-full p-8 shadow-2xl mx-4 text-center">
             <div
                 class="w-16 h-16 bg-slate-50 text-slate-400 rounded-2xl flex items-center justify-center mx-auto mb-4 text-center">
-                <i data-lucide="log-out" class="w-8 h-8"></i></div>
+                <i data-lucide="log-out" class="w-8 h-8"></i>
+            </div>
             <h3 class="text-xl font-black mb-2 text-slate-800 text-center">ログアウトしますか？</h3>
             <div class="flex gap-3 mt-6"><button onclick="closeModal('modal-logout')"
                     class="flex-1 py-4 border border-slate-200 rounded-2xl font-bold text-center">戻る</button><button
@@ -496,7 +500,8 @@
         <div class="bg-white rounded-[2rem] max-sm w-full p-8 shadow-2xl mx-4 text-center text-center">
             <div
                 class="w-16 h-16 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-center">
-                <i data-lucide="alert-circle" class="w-8 h-8"></i></div>
+                <i data-lucide="alert-circle" class="w-8 h-8"></i>
+            </div>
             <h3 class="text-xl font-black mb-2 text-slate-800 text-center text-center">予約をキャンセル</h3>
             <p class="text-sm text-slate-400 mb-8">一度キャンセルすると戻せません。</p>
             <div class="flex gap-3"><button onclick="closeModal('modal-cancel')"
@@ -609,10 +614,10 @@
                 lucide.createIcons();
             } catch (err) { console.error("Event Fetch Error:", err); }
         }
-        function openDetailModal(id) { selectedEvent = eventsData.find(x => x.id === id); if (!selectedEvent) return; document.getElementById('detail-title').innerText = selectedEvent.title; document.getElementById('detail-description').innerText = selectedEvent.description; document.getElementById('detail-price-text').innerText = `¥${selectedEvent.personalPrice.toLocaleString()}`; document.getElementById('detail-point-text').innerText = `${selectedEvent.selfPoints} pt`; document.getElementById('detail-img').src = selectedEvent.img; openModal('modal-detail'); }
-        function openLocationModal(id) { selectedEvent = eventsData.find(x => x.id === id); if (!selectedEvent) return; document.getElementById('loc-name').innerText = selectedEvent.location; document.getElementById('loc-address').innerText = selectedEvent.address; document.getElementById('loc-map-img').src = selectedEvent.map; openModal('modal-location'); }
+        function openDetailModal(id) { selectedEvent = eventsData.find(x => x.id == id); if (!selectedEvent) return; document.getElementById('detail-title').innerText = selectedEvent.title; document.getElementById('detail-description').innerText = selectedEvent.description; document.getElementById('detail-price-text').innerText = `¥${selectedEvent.personalPrice.toLocaleString()}`; document.getElementById('detail-point-text').innerText = `${selectedEvent.selfPoints} pt`; document.getElementById('detail-img').src = selectedEvent.img; openModal('modal-detail'); }
+        function openLocationModal(id) { selectedEvent = eventsData.find(x => x.id == id); if (!selectedEvent) return; document.getElementById('loc-name').innerText = selectedEvent.location; document.getElementById('loc-address').innerText = selectedEvent.address; document.getElementById('loc-map-img').src = selectedEvent.map; openModal('modal-location'); }
         function confirmAction(id) {
-            selectedEvent = eventsData.find(x => x.id === id); accompaniments = 0;
+            selectedEvent = eventsData.find(x => x.id == id); accompaniments = 0;
             if (selectedEvent.maxAccompaniments > 0) { document.getElementById('companion-section').classList.remove('hidden'); } else { document.getElementById('companion-section').classList.add('hidden'); }
             document.getElementById('confirm-details').innerHTML = `<p class="font-black text-slate-800 text-sm leading-tight mb-1.5 break-words text-left text-left">${selectedEvent.title}</p><div class="text-[10px] text-slate-400 font-medium leading-tight text-left text-left text-left"><p>${selectedEvent.date} / ${selectedEvent.time}</p><p>場所: ${selectedEvent.location}</p></div>`;
             updateCounterUI(); openModal('modal-confirm');
