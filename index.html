@@ -616,6 +616,34 @@
             else { const label = p === 'login' ? '新規登録' : 'ログイン'; const target = p === 'login' ? 'register' : 'login'; nav.innerHTML = `<button onclick="event.stopPropagation(); navigateTo('${target}')" class="text-xs font-black text-8labo border-2 border-8labo px-4 py-2 rounded-xl hover:bg-orange-50 uppercase tracking-widest text-center text-center text-center text-center text-center">${label}</button>`; }
             lucide.createIcons();
         }
+        // --- 画像処理ロジック ---
+        const DEFAULT_IMAGES = {
+            'ヨガ': 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=600',
+            'ストレッチ': 'https://images.unsplash.com/photo-1552196564-972b3693f00a?q=80&w=600',
+            'トレーニング': 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=600',
+            'ランニング': 'https://images.unsplash.com/photo-1552674605-1e227284b80e?q=80&w=600',
+            'ピラティス': 'https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=600',
+            '朝活': 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=600',
+            '夕活': 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?q=80&w=600',
+            'デフォルト': 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?q=80&w=600',
+            'マップ': 'https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=600' // シンプルな地図っぽい画像
+        };
+        function resolveEventImage(event) {
+            if (event.img && event.img.startsWith('http')) return event.img;
+            const title = event.title || "";
+            if (title.includes('ヨガ')) return DEFAULT_IMAGES['ヨガ'];
+            if (title.includes('ストレッチ')) return DEFAULT_IMAGES['ストレッチ'];
+            if (title.includes('トレーニング') || title.includes('HIIT')) return DEFAULT_IMAGES['トレーニング'];
+            if (title.includes('ラン') || title.includes('走')) return DEFAULT_IMAGES['ランニング'];
+            if (title.includes('ピラティス')) return DEFAULT_IMAGES['ピラティス'];
+            if (title.includes('朝')) return DEFAULT_IMAGES['朝活'];
+            if (title.includes('夕') || title.includes('夜')) return DEFAULT_IMAGES['夕活'];
+            return DEFAULT_IMAGES['デフォルト'];
+        }
+        function resolveMapImage(url) {
+            if (url && url.startsWith('http')) return url;
+            return DEFAULT_IMAGES['マップ'];
+        }
         async function renderEvents() {
             try {
                 const res = await fetchFromGas('getEventsData'); if (!res.success) return;
@@ -626,7 +654,6 @@
                         const isB = ordersData.some(o => o.eventId === e.id && o.status !== 'キャンセル');
                         const rem = e.capacity - e.enrollees;
                         const cPrice = (e.personalPrice !== e.companionPrice && e.maxAccompaniments > 0) ? `<span class="text-[10px] text-slate-400 font-bold ml-1 text-left">(同伴 ¥${e.companionPrice.toLocaleString()})</span>` : "";
-                        // ★ FIX: 強引なz-index注入を削除し、標準動作に戻す
                         return `
                         <div class="bg-white rounded-[2rem] border border-slate-200 p-6 card-hover flex flex-col justify-between h-full shadow-sm text-left event-card">
                             <div class="space-y-4 text-left">
@@ -652,8 +679,28 @@
                 lucide.createIcons();
             } catch (err) { console.error("Event Fetch Error:", err); }
         }
-        function openDetailModal(id) { selectedEvent = eventsData.find(x => x.id == id); if (!selectedEvent) return; document.getElementById('detail-title').innerText = selectedEvent.title; document.getElementById('detail-description').innerText = selectedEvent.description; document.getElementById('detail-price-text').innerText = `¥${selectedEvent.personalPrice.toLocaleString()}`; document.getElementById('detail-point-text').innerText = `${selectedEvent.selfPoints} pt`; document.getElementById('detail-img').src = selectedEvent.img; openModal('modal-detail'); }
-        function openLocationModal(id) { selectedEvent = eventsData.find(x => x.id == id); if (!selectedEvent) return; document.getElementById('loc-name').innerText = selectedEvent.location; document.getElementById('loc-address').innerText = selectedEvent.address; document.getElementById('loc-map-img').src = selectedEvent.map; openModal('modal-location'); }
+        function openDetailModal(id) {
+            selectedEvent = eventsData.find(x => x.id == id);
+            if (!selectedEvent) return;
+            document.getElementById('detail-title').innerText = selectedEvent.title;
+            document.getElementById('detail-description').innerText = selectedEvent.description;
+            document.getElementById('detail-price-text').innerText = `¥${selectedEvent.personalPrice.toLocaleString()}`;
+            document.getElementById('detail-point-text').innerText = `${selectedEvent.selfPoints} pt`;
+            // 画像自動補完
+            document.getElementById('detail-img').src = resolveEventImage(selectedEvent);
+            openModal('modal-detail');
+        }
+        function openLocationModal(id) {
+            selectedEvent = eventsData.find(x => x.id == id);
+            if (!selectedEvent) return;
+            document.getElementById('loc-name').innerText = selectedEvent.location;
+            document.getElementById('loc-address').innerText = selectedEvent.address;
+            // マップ画像フォールバック
+            const mapImg = document.getElementById('loc-map-img');
+            mapImg.src = resolveMapImage(selectedEvent.map);
+            mapImg.onerror = function () { this.src = DEFAULT_IMAGES['マップ']; };
+            openModal('modal-location');
+        }
         function confirmAction(id) {
             selectedEvent = eventsData.find(x => x.id == id); accompaniments = 0;
             const maxAcc = Number(selectedEvent.maxAccompaniments) || 0;
@@ -732,7 +779,7 @@
             if (myo.length === 0) { container.innerHTML = `<div class="bg-slate-50 border-2 border-dashed border-slate-100 rounded-3xl p-8 text-center text-slate-300 font-bold text-sm">予約中のイベントはありません</div>`; return; }
             container.innerHTML = myo.map(o => {
                 const e = eventsData.find(x => x.id === o.eventId); if (!e) return '';
-                return `<div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex items-center justify-between gap-4 overflow-hidden"><div class="flex items-center gap-3 min-w-0 flex-grow text-left text-left"><div class="bg-orange-50 text-8labo w-12 h-12 rounded-xl flex flex-col items-center justify-center font-black text-[10px] leading-none shrink-0 tracking-tighter text-center text-center"><span>${e.date.split('.')[1]}月</span><span class="text-sm mt-0.5 text-center text-center">${e.date.split('.')[2].split(' ')[0]}日</span></div><div class="min-w-0 flex-grow text-left text-left text-left"><h4 class="font-bold text-sm text-slate-800 leading-tight break-words text-left text-left text-left">${e.title}</h4><p class="text-[10px] text-slate-400 font-medium mt-1 text-left text-left text-left">@ ${e.location}</p></div></div><button onclick="event.stopPropagation(); targetCancelOrderId='${o.id}'; selectedEvent = eventsData.find(ev => ev.id === '${o.eventId}'); openModal('modal-cancel');" class="text-[11px] font-black text-slate-300 hover:text-red-500 uppercase shrink-0 pl-2 transition-colors relative z-10">取消</button></div>`;
+                return `<div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex items-center justify-between gap-4 overflow-hidden"><div class="flex items-center gap-3 min-w-0 flex-grow text-left text-left"><div class="bg-orange-50 text-8labo w-12 h-12 rounded-xl flex flex-col items-center justify-center font-black text-[10px] leading-none shrink-0 tracking-tighter text-center text-center"><span>${e.date.split('.')[1]}月</span><span class="text-sm mt-0.5 text-center text-center">${e.date.split('.')[2].split(' ')[0]}日</span></div><div class="min-w-0 flex-grow text-left text-left text-left"><h4 class="font-bold text-sm text-slate-800 leading-tight break-words text-left text-left text-left">${e.title}</h4><p class="text-[10px] text-slate-400 font-medium mt-1 text-left text-left text-left">@ ${e.location}</p></div></div><button onclick="event.stopPropagation(); targetCancelOrderId='${o.id}'; selectedEvent = eventsData.find(ev => ev.id == '${o.eventId}'); openModal('modal-cancel');" class="text-[11px] font-black text-slate-300 hover:text-red-500 uppercase shrink-0 pl-2 transition-colors relative z-10">取消</button></div>`;
             }).join(''); lucide.createIcons();
         }
         async function handleBookingCancel() {
