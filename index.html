@@ -618,7 +618,8 @@
         function openLocationModal(id) { selectedEvent = eventsData.find(x => x.id == id); if (!selectedEvent) return; document.getElementById('loc-name').innerText = selectedEvent.location; document.getElementById('loc-address').innerText = selectedEvent.address; document.getElementById('loc-map-img').src = selectedEvent.map; openModal('modal-location'); }
         function confirmAction(id) {
             selectedEvent = eventsData.find(x => x.id == id); accompaniments = 0;
-            if (selectedEvent.maxAccompaniments > 0) { document.getElementById('companion-section').classList.remove('hidden'); } else { document.getElementById('companion-section').classList.add('hidden'); }
+            const maxAcc = Number(selectedEvent.maxAccompaniments) || 0;
+            if (maxAcc > 0) { document.getElementById('companion-section').classList.remove('hidden'); } else { document.getElementById('companion-section').classList.add('hidden'); }
             document.getElementById('confirm-details').innerHTML = `<p class="font-black text-slate-800 text-sm leading-tight mb-1.5 break-words text-left text-left">${selectedEvent.title}</p><div class="text-[10px] text-slate-400 font-medium leading-tight text-left text-left text-left"><p>${selectedEvent.date} / ${selectedEvent.time}</p><p>場所: ${selectedEvent.location}</p></div>`;
             updateCounterUI(); openModal('modal-confirm');
         }
